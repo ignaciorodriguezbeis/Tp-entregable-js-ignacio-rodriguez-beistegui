@@ -1,8 +1,7 @@
 
 
-
-
 // Variables globales
+
 const HORARIOS_LABORALES = {
     'Lunes': '9:00 AM - 6:00 PM',
     'Martes': '9:00 AM - 6:00 PM',
@@ -44,7 +43,9 @@ class TurnoManager {
             console.error('No se encontró el botón de turno');
         }
     }
+
     // Función principal que maneja todo el proceso
+
     async iniciarFormulario() {
 
         try {
@@ -67,7 +68,9 @@ class TurnoManager {
             alert('Ha ocurrido un error en el formulario. Por favor, inténtalo nuevamente.');
         }
     }
+
     // Función para recolectar datos personales con validaciones
+
     async recolectarDatosPersonales() {
 
         console.log('Recolectando datos personales...');
@@ -97,7 +100,9 @@ class TurnoManager {
                     this.datosUsuario[campo.nombre] = valor.trim();
                     valorValido = true;
                     console.log(`${campo.nombre} validado correctamente`);
-                } else {
+                }
+
+                else {
                     alert(MENSAJES_ERROR[campo.nombre]);
                     this.contadorIntentos++;
 
@@ -112,7 +117,9 @@ class TurnoManager {
         console.log('Datos personales recolectados exitosamente');
         return true;
     }
+
     //  recolectar datos del turno
+
     async recolectarDatosTurno() {
 
         console.log('Recolectando datos del turno...');
@@ -151,7 +158,9 @@ class TurnoManager {
         console.log('Datos del turno recolectados exitosamente');
         return true;
     }
+
     //  mostrar confirmacion
+
     async mostrarConfirmacion() {
 
         console.log('Mostrando confirmacion...');
@@ -167,7 +176,8 @@ class TurnoManager {
             return false;
         }
 
-        //  manejar la respuesta
+        //  manejar la respuesta´
+
         if (confirmacion.toLowerCase() === 'si' || confirmacion.toLowerCase() === 'sí') {
             this.mostrarConfirmacionExitosa();
             return true;
@@ -181,9 +191,11 @@ class TurnoManager {
             return await this.mostrarConfirmacion();
         }
     }
-// Función para generar el resumen de datos
+
+    // Función para generar el resumen de datos
+
     generarResumen() {
-        
+
         console.log('Generando resumen...');
 
         let resumen = '=== RESUMEN DE TURNO ===\n\n';
@@ -206,9 +218,11 @@ class TurnoManager {
 
         return resumen;
     }
-// Función para mostrar confirmacion exitosa
+
+    // Función para mostrar confirmacion exitosa
+
     mostrarConfirmacionExitosa() {
-        
+
         console.log('Mostrando confirmacion exitosa...');
 
         const mensaje = `¡Turno confirmado exitosamente!\n\n${this.generarResumen()}\nNos pondremos en contacto contigo pronto para confirmar el horario específico.\n\n¡Gracias por elegir Vitalis!`;
@@ -216,17 +230,21 @@ class TurnoManager {
         alert(mensaje);
         console.log('Turno confirmado exitosamente');
     }
- // Función para los limpiar datos
+
+    // Función para los limpiar datos
+
     limpiarDatos() {
-       
+
         console.log('Limpiando datos...');
         this.datosUsuario = {};
         this.datosTurno = {};
         this.contadorIntentos = 0;
     }
- // Función para pedir los datos al usuario
+
+    // Función para pedir los datos al usuario
+
     async pedirDato(mensaje, tipo) {
-       
+
         return new Promise((resolve) => {
             const valor = prompt(mensaje);
             resolve(valor);
@@ -234,6 +252,7 @@ class TurnoManager {
     }
 
     // Funciones de validación
+
     validarNombre(nombre) {
         if (!nombre || nombre.trim().length < 3) return false;
         const palabras = nombre.trim().split(' ').filter(palabra => palabra.length > 0);
@@ -262,6 +281,7 @@ class TurnoManager {
 }
 
 // Función para iniciar el simulador
+
 function inicializarSimulador() {
     console.log('Inicializando simulador...');
     new TurnoManager();
