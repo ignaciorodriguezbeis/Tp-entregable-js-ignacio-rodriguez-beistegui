@@ -1,0 +1,487 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  transition: all 0.2s ease-in-out;
+}
+
+body {
+  font-family: "Noto Sans", sans-serif;
+  background: linear-gradient(to bottom right, #f6f9fd, #e2e4e7);
+  min-height: 100vh;
+  margin-top: 90px;
+}
+
+/* font-family: 'Noto Sans'; */
+header nav {
+  background: linear-gradient(to right, #06b6d4, #14b8a6);
+}
+header nav div a {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+header nav div a img {
+  border-radius: 50%;
+  height: 70px;
+  width: 70px;
+  align-items: center;
+}
+header nav div a span {
+  font-size: 40px;
+  font-weight: 700;
+  color: white;
+  padding: 0px 20px;
+  border-radius: 10px;
+}
+
+.offcanvas-body {
+  background: linear-gradient(to right, #06b6d4, #14b8a6);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.offcanvas-body ul {
+  list-style: none;
+  padding: 0;
+}
+.offcanvas-body ul li {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.offcanvas-body ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 26px;
+}
+.offcanvas-body ul li a:hover {
+  color: #0a095a;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.offcanvas-body ul li a button {
+  background-color: #14b8a6;
+  color: white;
+  border: white 2px solid;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 20px;
+}
+.offcanvas-body ul li a button:hover {
+  background-color: #0a095a;
+}
+
+.user-icon {
+  margin: 0 0 0 auto;
+}
+
+@media (max-width: 768px) {
+  .offcanvas-body {
+    padding: 20px;
+  }
+  .offcanvas-body ul li a {
+    font-size: 20px;
+  }
+  .offcanvas-body button {
+    font-size: 18px;
+    padding: 8px 16px;
+  }
+  .user-icon {
+    margin: 10px 0 0 auto;
+  }
+  nav div a span {
+    font-size: 30px;
+  }
+}
+@media (max-width: 480px) {
+  .offcanvas-body {
+    padding: 10px 15px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .offcanvas-body ul li a {
+    font-size: 28px;
+  }
+  .offcanvas-body button {
+    font-size: 26px;
+    padding: 6px 12px;
+    margin-right: 120px;
+  }
+  nav div a span {
+    font-size: 24px;
+  }
+}
+footer {
+  background: linear-gradient(to right, #334155, #1e293b);
+  color: white;
+  padding: 1rem 0;
+  margin-top: 3rem;
+}
+footer section {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  text-align: center;
+}
+footer section article {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-contacts {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  align-items: center;
+  gap: 20px;
+  font-size: 20px;
+}
+.footer-contacts a {
+  color: #06b6d4;
+  text-decoration: none;
+}
+.footer-contacts a:hover {
+  color: #0564f1;
+}
+
+.footer-social {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 70px;
+  margin: 8px;
+}
+.footer-social img {
+  height: 26px;
+  width: 28px;
+}
+
+.footer-copyright {
+  font-size: 14px;
+  font-weight: 400;
+  color: #9ca3af;
+  padding-top: 0.5rem;
+  border-top: 1px solid #475569;
+  text-align: center;
+}
+.footer-copyright:hover {
+  color: #0564f1;
+}
+
+@media (max-width: 480px) {
+  footer {
+    flex-direction: column;
+    margin-top: 5px;
+  }
+  footer section article {
+    gap: 5px;
+  }
+  .footer-contacts {
+    font-size: 12px;
+    gap: 5px;
+    flex-direction: column;
+  }
+  .footer-social {
+    gap: 40px;
+  }
+  .footer-social img {
+    height: 18px;
+    width: 17px;
+  }
+  .footer-copyright p {
+    font-size: 8px;
+    margin-bottom: 0;
+  }
+}
+.home-main {
+  max-width: 92%;
+  background-color: #e0f2fe;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.home-header {
+  background-image: url("../assets/tipos-de-sonrisa-1.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 10px;
+  padding: 60px 20px;
+  text-align: center;
+  position: relative;
+  height: 600px;
+  max-width: 130%;
+}
+.home-header img {
+  position: absolute;
+  top: 200px;
+  left: 31%;
+  border-radius: 50%;
+  height: 120px;
+  width: 120px;
+  display: flex;
+  align-items: center;
+  background: transparent;
+}
+.home-header div {
+  text-shadow: 2px 2px 1px #0a095a;
+  margin-top: 20px;
+  background: rgba(114, 114, 114, 0.3);
+  height: 200px;
+  width: 40%;
+  border-radius: 2rem;
+  position: absolute;
+  top: 135px;
+  left: 30%;
+  padding-left: 120px;
+}
+.home-header div h1 {
+  font-size: 40px;
+  font-weight: 700;
+  color: #14b8a6;
+  display: inline-block;
+  padding: 15px 30px;
+  border-radius: 10px;
+}
+.home-header div p {
+  font-size: 22px;
+  font-weight: 500;
+  color: white;
+  margin-top: 10px;
+  padding: 10px 20px;
+}
+
+/* Tratamientos */
+.home-tratamientos {
+  border-radius: 10px;
+  padding: 40px 20px;
+  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  max-width: 80%;
+  margin: 0 auto;
+}
+.home-tratamientos h2 {
+  font-size: 34px;
+  font-weight: 700;
+  color: #14b8a6;
+  width: 100%;
+  margin-bottom: 30px;
+  text-shadow: 1px 1px 1px #1e1c8f;
+  background: #effaff;
+  padding: 10px 20px;
+  border-radius: 10px;
+}
+.home-tratamientos article {
+  display: grid;
+  grid-template-columns: repeat(4, 250px);
+  grid-template-rows: repeat(2, 250px);
+  grid-area: auto;
+  background-color: #f0f9ff;
+  gap: 30px;
+  padding: 20px;
+  border-radius: 10px;
+}
+.home-tratamientos h3 {
+  font-size: 20px;
+  font-weight: 500;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 5px 10px;
+  border-radius: 5px;
+  text-align: center;
+  margin-top: 70%;
+}
+
+/* Imágenes de fondo para los tratamientos*/
+.Odontología-general {
+  background-image: url("../assets/sonrisa-dientes-sanos-perfectos-mujer-joven_168410-402.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 10px;
+}
+
+.Implantologia {
+  background-image: url("../assets/implantes-dentales.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 10px;
+}
+
+.Endodoncia {
+  background-image: url("../assets/render-tratamiento-endodoncia.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 10px;
+}
+
+.Estética-dental {
+  background-image: url("../assets/estetica-dental.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 10px;
+}
+
+.Ortodoncia {
+  background-image: url("../assets/ortodoncia-clinica-dental.jpeg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 10px;
+}
+
+.protesis {
+  background-image: url("../assets/diferentes-tipos-de-protesis-dental.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 10px;
+}
+
+.Periodoncia {
+  background-image: url("../assets/periodoncia-dental.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 10px;
+}
+
+.Radiografía {
+  background-image: url("../assets/radiografia-dental.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 10px;
+}
+
+/* Consultorios */
+.home-consultorios {
+  padding: 40px 20px;
+  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.home-consultorios h2 {
+  font-size: 35px;
+  font-weight: 600;
+  color: black;
+  width: 50%;
+  background-color: #f1fffd;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 20px 200px;
+}
+.home-consultorios div {
+  background-color: #d8ffff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  text-align: left;
+  width: 550px;
+}
+.home-consultorios div h3 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #06b6d4;
+  text-shadow: 1px 1px 1px #0a095a;
+}
+.home-consultorios div li {
+  font-size: 18px;
+  font-weight: 500;
+  color: grey;
+}
+.home-consultorios div li a {
+  text-decoration: none;
+}
+.home-consultorios div ul {
+  list-style: none;
+}
+
+@media (max-width: 480px) {
+  .home-main {
+    display: block;
+    flex-direction: column;
+    max-width: 100%;
+  }
+  .home-header {
+    height: 200px;
+  }
+  .home-header img {
+    height: 50px;
+    width: 50px;
+    top: auto;
+    left: auto;
+  }
+  .home-header div {
+    width: 90%;
+    height: 150px;
+    top: 0;
+    left: auto;
+    padding-left: 30px;
+  }
+  .home-header div h1 {
+    font-size: 24px;
+    padding: 5px 10px;
+  }
+  .home-header div p {
+    font-size: 16px;
+    padding: 5px 10px;
+  }
+  .home-tratamientos {
+    padding: 5px;
+    max-width: 100%;
+    flex-direction: column;
+  }
+  .home-tratamientos h2 {
+    font-size: 22px;
+    padding: 5px 10px;
+    margin-bottom: 0;
+    text-shadow: none;
+  }
+  .home-tratamientos article {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(4, 1fr);
+  }
+  .home-tratamientos article h3 {
+    font-size: 12px;
+  }
+  .home-consultorios {
+    padding: 5px;
+  }
+  .home-consultorios h2 {
+    font-size: 24px;
+    padding: 8px;
+    margin: auto;
+  }
+  .home-consultorios div {
+    padding: 5px;
+  }
+  .home-consultorios div h3 {
+    font-size: 20px;
+  }
+  .home-consultorios div ul {
+    padding: 10px;
+    font-size: 16px;
+  }
+}
