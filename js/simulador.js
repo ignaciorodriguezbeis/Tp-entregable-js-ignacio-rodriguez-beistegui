@@ -1,4 +1,7 @@
 
+
+
+
 // Variables globales
 const HORARIOS_LABORALES = {
     'Lunes': '9:00 AM - 6:00 PM',
@@ -41,7 +44,7 @@ class TurnoManager {
             console.error('No se encontró el botón de turno');
         }
     }
-    // Función principal que coordina todo el proceso
+    // Función principal que maneja todo el proceso
     async iniciarFormulario() {
 
         try {
