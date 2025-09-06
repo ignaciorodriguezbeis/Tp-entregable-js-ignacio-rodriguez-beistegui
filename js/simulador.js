@@ -1,4 +1,4 @@
-// Script para manejar el formulario de turnos de Vitalis
+
 // Variables globales
 const HORARIOS_LABORALES = {
     'Lunes': '9:00 AM - 6:00 PM',
