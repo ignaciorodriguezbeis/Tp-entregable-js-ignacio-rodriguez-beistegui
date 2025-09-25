@@ -51,8 +51,12 @@
                                 <a class="nav-link mx-lg-2 " aria-current="page" href="./index.html">Home</a>
                             </li>
 
+                            <li class="nav-item">
+                                <a class="nav-link mx-lg-2"><button id="btnVerHistorial">Ver Historial</button></a>
+                            </li>
+
                             <li class="nav-item user-icon">
-                                <a class="nav-link mx-lg-2"><button>Pedi tu Turno</button></a>
+                                <a class="nav-link mx-lg-2"><button id="btnPedirTurno">Pedi tu Turno</button></a>
                             </li>
 
                         </ul>
@@ -74,55 +78,202 @@
             </div>
         </div>
 
-        <!-- Descripción del Simulador -->
-        <section class="simulador-descripcion">
-            <h2>Simulador de Turnos</h2>
 
-            <p>Utiliza el boton de "pedi tu Turno" para activar el simulador.</p>
-            <p>El simulador te guiará a través de una serie de preguntas para recopilar los datos del paciente para
-                simular como se agendaría un turno.</p>
 
-        </section>
+        <!-- formulario de turnos -->
+        <div class="modal fade" id="turnoModal" tabindex="-1" aria-labelledby="turnoModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="turnoModalLabel">Solicitar Turno</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+
+                        <!-- Formulario de datos personales -->
+
+                        <form id="formularioTurno">
+
+                            <div class="mb-3">
+                                <label for="nombre" class="form-label">Nombre Completo *</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                <div class="invalid-feedback" id="nombreError"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="dni" class="form-label">DNI *</label>
+                                <input type="text" class="form-control" id="dni" name="dni" required>
+                                <div class="invalid-feedback" id="dniError"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="telefono" class="form-label">Teléfono *</label>
+                                <input type="tel" class="form-control" id="telefono" name="telefono" required>
+                                <div class="invalid-feedback" id="telefonoError"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                                <div class="invalid-feedback" id="emailError"></div>
+                            </div>
+
+                            <div class="mb-1">
+                                <label for="consultorio" class="form-label">Consultorio *</label>
+                                <select class="form-select" id="consultorio" name="consultorio" required>
+                                    <option value="">Selecciona consultorio</option>
+                                    <option value="Colonia Tirolesa">Colonia Tirolesa</option>
+                                    <option value="Villa Carlos Paz">Villa Carlos Paz</option>
+                                </select>
+                                <div class="invalid-feedback" id="consultorioError"></div>
+                            </div>
+
+                            <div class="mb-1">
+                                <label for="dia" class="form-label">Día de la semana *</label>
+                                <select class="form-select" id="dia" name="dia" required>
+                                    <option value="">Selecciona un día</option>
+                                    <option value="Lunes">Lunes</option>
+                                    <option value="Martes">Martes</option>
+                                    <option value="Miércoles">Miércoles</option>
+                                    <option value="Jueves">Jueves</option>
+                                    <option value="Viernes">Viernes</option>
+                                    <option value="Sábado">Sábado</option>
+                                </select>
+                                <div class="invalid-feedback" id="diaError"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="tratamiento" class="form-label">Tipo de Tratamiento</label>
+                                <select class="form-select" id="tratamiento" name="tratamiento">
+                                    <option value="">Selecciona un tratamiento</option>
+                                    <option value="Odontología General">Odontología General</option>
+                                    <option value="Implantología">Implantología</option>
+                                    <option value="Endodoncia">Endodoncia</option>
+                                    <option value="Estética Dental">Estética Dental</option>
+                                    <option value="Ortodoncia">Ortodoncia</option>
+                                    <option value="Prótesis">Prótesis</option>
+                                    <option value="Periodoncia">Periodoncia</option>
+                                    <option value="Radiografía">Radiografía</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="observaciones" class="form-label">Observaciones</label>
+                                <textarea class="form-control" id="observaciones" name="observaciones"
+                                    rows="3"></textarea>
+                            </div>
+                        </form>
+
+                        <!-- Resumen del turno -->
+                        <div id="resumenTurno" class="mt-4" style="display: none;">
+
+                            <h6>Resumen del Turno:</h6>
+
+                            <div id="resumenContenido" class="alert alert-info"></div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+
+                        <button type="button" class="btn btn-primary" id="btnConfirmarTurno">Confirmar Turno</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ventana para mostrar los turnos guardados -->
+
+        <div class="modal fade" id="historialModal" tabindex="-1" aria-labelledby="historialModalLabel"
+            aria-hidden="true">
+
+            <div class="modal-dialog modal-lg">
+
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="historialModalLabel">Historial de Turnos</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <div id="historialContenido">
+                            <p>No hay turnos registrados.</p>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+
+                        <button type="button" class="btn btn-danger" id="btnLimpiarHistorial">Limpiar Historial</button>
+
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <section class="home-tratamientos">
+
             <h2>Tratamientos avanzados para todas las necesidades</h2>
+
             <article>
+
                 <div class="Odontología-general">
                     <h3>Odontología general</h3>
                 </div>
+
                 <div class="Implantologia">
                     <h3>Implantologia</h3>
                 </div>
+
                 <div class="Endodoncia">
                     <h3>Endodoncia</h3>
                 </div>
+
                 <div class="Estética-dental">
                     <h3>Estética dental</h3>
                 </div>
+
                 <div class="Ortodoncia">
                     <h3>Ortodoncia</h3>
                 </div>
+
                 <div class="protesis">
                     <h3>Prótesis fijas y removibles</h3>
                 </div>
+
                 <div class="Periodoncia">
                     <h3>Periodoncia</h3>
                 </div>
+
                 <div class="Radiografía">
                     <h3>Radiografía y TAC 3D</h3>
                 </div>
+
             </article>
         </section>
 
         <section class="home-consultorios">
+
             <h2>Consultorios</h2>
+
             <div>
+
                 <h3>Colonia Tirolesa</h3>
+
                 <ul>
                     <li>Teléfono: <a href="tel:+543512345678">+54 351 234 5678</a></li>
+
                     <li>Dirección: Ruta 111 0, X5101 Col. Tirolesa, Córdoba, Argentina</li>
+
                     <li>Correo electrónico: <a href="mailto:odont.vialis@gmail.com">odont.vialis@gmail.com</a></li>
-                    <li>Horarios<ul>
+
+                    <li>Horarios
+                        <ul>
                             <li>Lunes a Viernes: 9:00 AM - 6:00 PM</li>
                             <li>Sábado: 9:00 AM - 1:00 PM</li>
                             <li>Domingo: Cerrado</li>

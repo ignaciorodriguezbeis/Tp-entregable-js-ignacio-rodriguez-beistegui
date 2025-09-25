@@ -1,7 +1,8 @@
 
+// simulador.js
 
-// Variables globales
 
+// Configuración
 const HORARIOS_LABORALES = {
     'Lunes': '9:00 AM - 6:00 PM',
     'Martes': '9:00 AM - 6:00 PM',
@@ -11,281 +12,255 @@ const HORARIOS_LABORALES = {
     'Sábado': '9:00 AM - 1:00 PM'
 };
 
-const DIAS_DISPONIBLES = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 const MENSAJES_ERROR = {
-    nombre: 'El nombre debe tener al menos 2 palabras y solo letras.',
-    dni: 'El DNI debe tener entre 7 y 8 dígitos numéricos.',
-    telefono: 'El teléfono debe tener al menos 10 dígitos numéricos.',
+    nombre: 'El nombre debe tener al menos 2 palabras.',
+    dni: 'El DNI debe tener entre 7 y 8 dígitos.',
+    telefono: 'El teléfono debe tener al menos 10 dígitos.',
     email: 'Por favor, ingresa un correo electrónico válido.',
-    dia: 'Por favor, selecciona un número válido entre 1 y 6.'
+    consultorio: 'Por favor, selecciona un consultorio.',
+    dia: 'Por favor, selecciona un día válido.'
 };
 
-class TurnoManager {
-
-    // Variables de instancia
+// Clase principal 
+class GestorTurnos {
     constructor() {
-        this.datosUsuario = {};
-        this.datosTurno = {};
-        this.contadorIntentos = 0;
-        this.maxIntentos = 3;
-        this.init();
-    }
-    // Función de inicio
-    init() {
-
-        console.log('Inicializando simulador de turnos...');
-        let botonTurno = document.querySelector('.nav-item.user-icon button');
-
-        if (botonTurno) {
-            botonTurno.addEventListener('click', () => this.iniciarFormulario());
-            console.log('Botón de turno encontrado y configurado');
-        } else {
-            console.error('No se encontró el botón de turno');
-        }
+        this.turnos = this.cargarTurnos();
+        this.inicializar();
     }
 
-    // Función principal que maneja todo el proceso
+    // Inicialización 
+    inicializar() {
+        this.configurarEventos();
+        this.actualizarHistorial();
+    }
 
-    async iniciarFormulario() {
+    // Configuración de eventos 
+    configurarEventos() {
+        // Botones principales
+        document.getElementById('btnPedirTurno')?.addEventListener('click', () => this.abrirFormulario());
+        document.getElementById('btnVerHistorial')?.addEventListener('click', () => this.mostrarHistorial());
+        document.getElementById('btnConfirmarTurno')?.addEventListener('click', () => this.procesarTurno());
+        document.getElementById('btnLimpiarHistorial')?.addEventListener('click', () => this.limpiarHistorial());
 
-        try {
-            console.log('Iniciando formulario de turno...');
-            this.contadorIntentos = 0;
-
-            const datosPersonalesCompletados = await this.recolectarDatosPersonales();
-            if (!datosPersonalesCompletados) {
-                return; // El usuario cancela
+        // Validación en tiempo real
+        ['nombre', 'dni', 'telefono', 'email', 'consultorio'].forEach(campo => {
+            const input = document.getElementById(campo);
+            if (input) {
+                input.addEventListener('blur', () => this.validarCampo(campo, input.value));
+                input.addEventListener('input', () => this.limpiarError(campo));
             }
+        });
 
-            const datosTurnoCompletados = await this.recolectarDatosTurno();
-            if (!datosTurnoCompletados) {
-                return; // El usuario cancela
-            }
+        // Actualizar el resumen
+        document.getElementById('dia')?.addEventListener('change', () => this.mostrarResumen());
+        document.getElementById('consultorio')?.addEventListener('change', () => this.mostrarResumen());
+    }
 
-            await this.mostrarConfirmacion();
-        } catch (error) {
-            console.error('Error en el formulario:', error);
-            alert('Ha ocurrido un error en el formulario. Por favor, inténtalo nuevamente.');
+    // Abrir el formulario
+    abrirFormulario() {
+        document.getElementById('formularioTurno').reset();
+        this.limpiarTodosLosErrores();
+        this.ocultarResumen();
+        new bootstrap.Modal(document.getElementById('turnoModal')).show();
+    }
+
+    // Procesar el turno 
+    procesarTurno() {
+        const datos = this.recopilarDatos();
+
+        if (this.validarFormulario(datos)) {
+            this.guardarTurno(datos);
+            this.mostrarConfirmacion();
+            bootstrap.Modal.getInstance(document.getElementById('turnoModal')).hide();
+            this.actualizarHistorial();
         }
     }
 
-    // Función para recolectar datos personales con validaciones
+    // Recopilar los datos del formulario
+    recopilarDatos() {
+        const formData = new FormData(document.getElementById('formularioTurno'));
+        const datos = {};
 
-    async recolectarDatosPersonales() {
-
-        console.log('Recolectando datos personales...');
-
-        const camposRequeridos = [
-            { nombre: 'nombre', tipo: 'text', validacion: this.validarNombre },
-            { nombre: 'DNI', tipo: 'number', validacion: this.validarDNI },
-            { nombre: 'telefono', tipo: 'tel', validacion: this.validarTelefono },
-            { nombre: 'email', tipo: 'email', validacion: this.validarEmail }
-        ];
-
-        //  procesar cada campo
-        for (let i = 0; i < camposRequeridos.length; i++) {
-            const campo = camposRequeridos[i];
-            let valorValido = false;
-
-            //  validación
-            while (!valorValido && this.contadorIntentos < this.maxIntentos) {
-                const valor = await this.pedirDato(`Por favor, ingresa tu ${campo.nombre}:`, campo.tipo);
-
-                if (valor === null) {
-                    alert('Formulario cancelado');
-                    return false;
-                }
-
-                if (campo.validacion(valor)) {
-                    this.datosUsuario[campo.nombre] = valor.trim();
-                    valorValido = true;
-                    console.log(`${campo.nombre} validado correctamente`);
-                }
-
-                else {
-                    alert(MENSAJES_ERROR[campo.nombre]);
-                    this.contadorIntentos++;
-
-                    if (this.contadorIntentos >= this.maxIntentos) {
-                        alert('Has excedido el número máximo de intentos. El formulario se reiniciará.');
-                        return false;
-                    }
-                }
-            }
+        for (let [key, value] of formData.entries()) {
+            datos[key] = value.trim();
         }
 
-        console.log('Datos personales recolectados exitosamente');
-        return true;
+        datos.fechaCreacion = new Date().toLocaleString('es-AR');
+        datos.id = Date.now();
+
+        return datos;
     }
 
-    //  recolectar datos del turno
+    // Validación 
+    validarFormulario(datos) {
+        const camposObligatorios = ['nombre', 'dni', 'telefono', 'email', 'consultorio', 'dia'];
+        let esValido = true;
 
-    async recolectarDatosTurno() {
+        camposObligatorios.forEach(campo => {
+            if (!datos[campo] || !this.validarCampo(campo, datos[campo])) {
+                this.mostrarError(campo, MENSAJES_ERROR[campo]);
+                esValido = false;
+            }
+        });
 
-        console.log('Recolectando datos del turno...');
+        return esValido;
+    }
 
-        let mensajeDias = 'Selecciona el dia para tu turno:\n';
-        for (let i = 0; i < DIAS_DISPONIBLES.length; i++) {
-            mensajeDias += `${i + 1}. ${DIAS_DISPONIBLES[i]}\n`;
-        }
-        mensajeDias += '\nIngresa el número del día (1-6):';
+    // Validación por campos individuales
+    validarCampo(campo, valor) {
+        if (!valor || valor.trim().length === 0) return false;
 
-        const diaSeleccionado = await this.pedirDato(mensajeDias, 'text');
-
-        if (diaSeleccionado === null) {
-            alert('Formulario cancelado');
-            return false;
-        }
-
-        const diaNumero = parseInt(diaSeleccionado);
-
-        //  validar el dia
-        if (isNaN(diaNumero)) {
-            alert(MENSAJES_ERROR.dia);
-            return await this.recolectarDatosTurno();
-        }
-
-        if (diaNumero < 1 || diaNumero > DIAS_DISPONIBLES.length) {
-            alert(MENSAJES_ERROR.dia);
-            return await this.recolectarDatosTurno();
-        }
-
-        this.datosTurno = {
-            dia: DIAS_DISPONIBLES[diaNumero - 1],
-            horario: HORARIOS_LABORALES[DIAS_DISPONIBLES[diaNumero - 1]]
+        const validaciones = {
+            nombre: () => valor.trim().split(' ').filter(p => p.length > 0).length >= 2,
+            dni: () => /^\d+$/.test(valor) && valor.length >= 7 && valor.length <= 8,
+            telefono: () => /^\d+$/.test(valor) && valor.length >= 10,
+            email: () => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor),
+            consultorio: () => ['Colonia Tirolesa', 'Villa Carlos Paz'].includes(valor),
+            dia: () => Object.keys(HORARIOS_LABORALES).includes(valor)
         };
 
-        console.log('Datos del turno recolectados exitosamente');
-        return true;
+        return validaciones[campo] ? validaciones[campo]() : true;
     }
 
-    //  mostrar confirmacion
+    // Mostrar los errores
+    mostrarError(campo, mensaje) {
+        const input = document.getElementById(campo);
+        const errorDiv = document.getElementById(campo + 'Error');
 
-    async mostrarConfirmacion() {
-
-        console.log('Mostrando confirmacion...');
-
-        const resumen = this.generarResumen();
-        const confirmacion = await this.pedirDato(
-            `${resumen}\n\n¿Los datos son correctos? (si/no):`,
-            'text'
-        );
-
-        if (confirmacion === null) {
-            alert('Formulario cancelado');
-            return false;
+        if (input && errorDiv) {
+            input.classList.add('is-invalid');
+            errorDiv.textContent = mensaje;
         }
+    }
 
-        //  manejar la respuesta´
+    // Limpiar los errores
+    limpiarError(campo) {
+        const input = document.getElementById(campo);
+        const errorDiv = document.getElementById(campo + 'Error');
 
-        if (confirmacion.toLowerCase() === 'si' || confirmacion.toLowerCase() === 'sí') {
-            this.mostrarConfirmacionExitosa();
-            return true;
-        } else if (confirmacion.toLowerCase() === 'no' || confirmacion.toLowerCase() === 'n') {
-            alert('Vamos a empezar de nuevo con el formulario.');
-            this.limpiarDatos();
-            await this.iniciarFormulario();
-            return true;
+        if (input && errorDiv) {
+            input.classList.remove('is-invalid');
+            errorDiv.textContent = '';
+        }
+    }
+
+    // Limpiar todos los errores
+    limpiarTodosLosErrores() {
+        ['nombre', 'dni', 'telefono', 'email', 'consultorio', 'dia'].forEach(campo => this.limpiarError(campo));
+    }
+
+    // Mostrar el resumen
+    mostrarResumen() {
+        const dia = document.getElementById('dia').value;
+        const consultorio = document.getElementById('consultorio').value;
+        const resumenDiv = document.getElementById('resumenTurno');
+        const resumenContenido = document.getElementById('resumenContenido');
+
+        if (dia && consultorio && resumenDiv && resumenContenido) {
+            resumenContenido.innerHTML = `
+                <strong>Consultorio:</strong> ${consultorio}<br>
+                <strong>Día:</strong> ${dia}<br>
+                <strong>Horario:</strong> ${HORARIOS_LABORALES[dia]}<br>
+                <small class="text-muted">Nos pondremos en contacto contigo para confirmar el horario específico.</small>
+            `;
+            resumenDiv.style.display = 'block';
         } else {
-            alert('Por favor, responde "si" o "no".');
-            return await this.mostrarConfirmacion();
+            this.ocultarResumen();
         }
     }
 
-    // Función para generar el resumen de datos
+    // Ocultar el resumen
+    ocultarResumen() {
+        const resumenDiv = document.getElementById('resumenTurno');
+        if (resumenDiv) resumenDiv.style.display = 'none';
+    }
 
-    generarResumen() {
+    // Guardar el turno
+    guardarTurno(datos) {
+        this.turnos.push(datos);
+        localStorage.setItem('turnosVitalis', JSON.stringify(this.turnos));
+    }
 
-        console.log('Generando resumen...');
+    // Cargar los turnos
+    cargarTurnos() {
+        const turnosGuardados = localStorage.getItem('turnosVitalis');
+        return turnosGuardados ? JSON.parse(turnosGuardados) : [];
+    }
 
-        let resumen = '=== RESUMEN DE TURNO ===\n\n';
-        resumen += 'DATOS PERSONALES:\n';
+    // Mostrar la confirmación
+    mostrarConfirmacion() {
+        const notificacion = document.createElement('div');
+        notificacion.className = 'alert alert-success position-fixed';
+        notificacion.style.cssText = 'top: 100px; right: 20px; z-index: 9999; min-width: 300px;';
+        notificacion.innerHTML = `
+            <h6>¡Turno confirmado exitosamente!</h6>
+            <p>Nos pondremos en contacto contigo pronto para confirmar el horario específico.</p>
+            <small>¡Gracias por elegir Vitalis!</small>
+        `;
 
-        //  mostrar datos personales
-        for (const [clave, valor] of Object.entries(this.datosUsuario)) {
-            resumen += `• ${clave.charAt(0).toUpperCase() + clave.slice(1)}: ${valor}\n`;
+        document.body.appendChild(notificacion);
+        setTimeout(() => notificacion.remove(), 5000);
+    }
+
+    // Mostrar el historial
+    mostrarHistorial() {
+        this.actualizarHistorial();
+        new bootstrap.Modal(document.getElementById('historialModal')).show();
+    }
+
+    // Actualizar el historial
+    actualizarHistorial() {
+        const historialContenido = document.getElementById('historialContenido');
+        if (!historialContenido) return;
+
+        if (this.turnos.length === 0) {
+            historialContenido.innerHTML = '<p class="text-muted">No hay turnos registrados.</p>';
+            return;
         }
 
-        resumen += '\nDATOS DEL TURNO:\n';
-        resumen += `• Día: ${this.datosTurno.dia}\n`;
-        resumen += `• Horario: ${this.datosTurno.horario}\n`;
+        const html = this.turnos.map((turno, index) => `
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title">Turno #${index + 1}</h6>
+                        <p class="card-text">
+                            <strong>Nombre:</strong> ${turno.nombre}<br>
+                            <strong>DNI:</strong> ${turno.dni}<br>
+                            <strong>Teléfono:</strong> ${turno.telefono}<br>
+                            <strong>Email:</strong> ${turno.email}<br>
+                            <strong>Consultorio:</strong> ${turno.consultorio}<br>
+                            <strong>Día:</strong> ${turno.dia}<br>
+                            <strong>Horario:</strong> ${HORARIOS_LABORALES[turno.dia]}<br>
+                            ${turno.tratamiento ? `<strong>Tratamiento:</strong> ${turno.tratamiento}<br>` : ''}
+                            <strong>Fecha de solicitud:</strong> ${turno.fechaCreacion}
+                        </p>
+                        ${turno.observaciones ? `<small class="text-muted"><strong>Observaciones:</strong> ${turno.observaciones}</small>` : ''}
+                    </div>
+                </div>
+            </div>
+        `).join('');
 
-        resumen += '\nHORARIOS DISPONIBLES:\n';
-        //  mostrar horarios
-        for (const [dia, horario] of Object.entries(HORARIOS_LABORALES)) {
-            resumen += `• ${dia}: ${horario}\n`;
+        historialContenido.innerHTML = `<div class="row">${html}</div>`;
+    }
+
+    // Borrar el historial
+    limpiarHistorial() {
+        if (confirm('¿Estás seguro de que quieres eliminar todos los turnos registrados?')) {
+            this.turnos = [];
+            localStorage.removeItem('turnosVitalis');
+            this.actualizarHistorial();
         }
-
-        return resumen;
-    }
-
-    // Función para mostrar confirmacion exitosa
-
-    mostrarConfirmacionExitosa() {
-
-        console.log('Mostrando confirmacion exitosa...');
-
-        const mensaje = `¡Turno confirmado exitosamente!\n\n${this.generarResumen()}\nNos pondremos en contacto contigo pronto para confirmar el horario específico.\n\n¡Gracias por elegir Vitalis!`;
-
-        alert(mensaje);
-        console.log('Turno confirmado exitosamente');
-    }
-
-    // Función para los limpiar datos
-
-    limpiarDatos() {
-
-        console.log('Limpiando datos...');
-        this.datosUsuario = {};
-        this.datosTurno = {};
-        this.contadorIntentos = 0;
-    }
-
-    // Función para pedir los datos al usuario
-
-    async pedirDato(mensaje, tipo) {
-
-        return new Promise((resolve) => {
-            const valor = prompt(mensaje);
-            resolve(valor);
-        });
-    }
-
-    // Funciones de validación
-
-    validarNombre(nombre) {
-        if (!nombre || nombre.trim().length < 3) return false;
-        const palabras = nombre.trim().split(' ').filter(palabra => palabra.length > 0);
-        if (palabras.length < 2) return false;
-        const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre);
-        return soloLetras;
-    }
-
-    validarDNI(dni) {
-        if (!dni) return false;
-        const soloNumeros = /^\d+$/.test(dni);
-        return soloNumeros && dni.length >= 7 && dni.length <= 8;
-    }
-
-    validarTelefono(telefono) {
-        if (!telefono) return false;
-        const soloNumeros = /^\d+$/.test(telefono);
-        return soloNumeros && telefono.length >= 10;
-    }
-
-    validarEmail(email) {
-        if (!email) return false;
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
     }
 }
 
-// Función para iniciar el simulador
-
+// Iniciar el simulador cuando Bootstrap esté listo
 function inicializarSimulador() {
-    console.log('Inicializando simulador...');
-    new TurnoManager();
+    if (typeof bootstrap !== 'undefined') {
+        window.gestorTurnos = new GestorTurnos();
+    } else {
+        setTimeout(inicializarSimulador, 100);
+    }
 }
 
-// Inicializar el manager cuando el DOM esté listo
+// Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', inicializarSimulador);

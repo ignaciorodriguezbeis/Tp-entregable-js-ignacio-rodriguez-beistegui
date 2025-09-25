@@ -11,8 +11,11 @@ body {
   min-height: 100vh;
   margin-top: 90px;
 }
-
 /* font-family: 'Noto Sans'; */
+
+
+/* HEADER */
+
 header nav {
   background: linear-gradient(to right, #06b6d4, #14b8a6);
 }
@@ -65,7 +68,7 @@ header nav div a span {
   cursor: pointer;
 }
 .offcanvas-body ul li a button {
-  background-color: #14b8a6;
+  background-color: transparent;
   color: white;
   border: white 2px solid;
   padding: 10px 20px;
@@ -118,6 +121,10 @@ header nav div a span {
     font-size: 24px;
   }
 }
+
+
+/* FOOTER */
+
 footer {
   background: linear-gradient(to right, #334155, #1e293b);
   color: white;
@@ -203,6 +210,9 @@ footer section article {
     margin-bottom: 0;
   }
 }
+
+/* MAIN */
+
 .home-main {
   max-width: 92%;
   background-color: #e0f2fe;
@@ -418,6 +428,205 @@ footer section article {
   list-style: none;
 }
 
+/* ventana emergente para el simulador de turnos */
+
+
+/* Estilos para el simulador y los formularios */
+.simulador-descripcion {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  padding: 30px;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.simulador-descripcion h2 {
+  color: #14b8a6;
+  font-size: 28px;
+  margin-bottom: 15px;
+  text-shadow: 1px 1px 1px #1e1c8f;
+}
+
+.simulador-descripcion p {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+/* Estilos para los modales */
+.modal-content {
+  border-radius: 15px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  background: linear-gradient(to right, #06b6d4, #14b8a6);
+  color: white;
+  border-radius: 15px 15px 0 0;
+  border-bottom: none;
+}
+
+.modal-header .btn-close {
+  filter: invert(1);
+}
+
+.modal-title {
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+.modal-body {
+  padding: 30px;
+}
+
+.modal-footer {
+  border-top: 1px solid #e9ecef;
+  padding: 20px 30px;
+}
+
+/* Estilos para los formularios */
+.form-label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.form-control, .form-select {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 12px 15px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #14b8a6;
+  box-shadow: 0 0 0 0.2rem rgba(20, 184, 166, 0.25);
+}
+
+.form-control.is-invalid {
+  border-color: #dc3545;
+}
+
+.invalid-feedback {
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+/* Estilos para los botones */
+.btn {
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(to right, #06b6d4, #14b8a6);
+  border: none;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(to right, #0891b2, #0f766e);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border: none;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+  transform: translateY(-2px);
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
+}
+
+/* Estilos para el resumen */
+#resumenTurno {
+  background-color: #e7f3ff;
+  border: 1px solid #b3d9ff;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+#resumenTurno h6 {
+  color: #14b8a6;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+/* Estilos para el historial */
+.card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.card-title {
+  color: #14b8a6;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.card-text {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Estilos para las notificaciones */
+.alert {
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.alert-success {
+  background: linear-gradient(to right, #d4edda, #c3e6cb);
+  color: #155724;
+}
+
+/* Estilos para la navegación actualizada */
+.nav-item button {
+  background-color: #14b8a6;
+  color: white;
+  border: white 2px solid;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.3s ease;
+}
+
+.nav-item button:hover {
+  background-color: #0a095a;
+  transform: translateY(-2px);
+}
+
+.nav-item button:active {
+  transform: translateY(0);
+}
+
 @media (max-width: 480px) {
   .home-main {
     display: block;
@@ -483,5 +692,24 @@ footer section article {
   .home-consultorios div ul {
     padding: 10px;
     font-size: 16px;
+  }
+  
+  /* Responsive para modales */
+  .modal-body {
+    padding: 20px;
+  }
+  
+  .modal-footer {
+    padding: 15px 20px;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+  
+  .form-control, .form-select {
+    padding: 10px 12px;
+    font-size: 14px;
   }
 }
