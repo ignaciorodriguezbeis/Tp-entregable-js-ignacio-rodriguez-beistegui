@@ -1,0 +1,11 @@
+[
+  { "nombre": "Odontología General", "clase": "Odontología-general" },
+  { "nombre": "Implantologia", "clase": "Implantologia" },
+  { "nombre": "Endodoncia", "clase": "Endodoncia" },
+  { "nombre": "Estética dental", "clase": "Estética-dental" },
+  { "nombre": "Ortodoncia", "clase": "Ortodoncia" },
+  { "nombre": "Prótesis fijas y removibles", "clase": "protesis" },
+  { "nombre": "Periodoncia", "clase": "Periodoncia" },
+  { "nombre": "Radiografía y TAC 3D", "clase": "Radiografía" }
+]
+

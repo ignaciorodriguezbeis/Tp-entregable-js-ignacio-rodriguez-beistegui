@@ -1,3 +1,5 @@
+/* font-family: 'Noto Sans'; */
+
 * {
   margin: 0;
   padding: 0;
@@ -11,7 +13,7 @@ body {
   min-height: 100vh;
   margin-top: 90px;
 }
-/* font-family: 'Noto Sans'; */
+
 
 
 /* HEADER */

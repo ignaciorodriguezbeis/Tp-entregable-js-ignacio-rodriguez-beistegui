@@ -1,6 +1,4 @@
 
-// simulador.js
-
 
 // Configuración
 const HORARIOS_LABORALES = {
@@ -21,22 +19,25 @@ const MENSAJES_ERROR = {
     dia: 'Por favor, selecciona un día válido.'
 };
 
-// Clase principal 
+//  Gestor de turnos
+
 class GestorTurnos {
     constructor() {
         this.turnos = this.cargarTurnos();
+        this.tratamientos = [];
         this.inicializar();
     }
 
-    // Inicialización 
+    // Iniciador
     inicializar() {
         this.configurarEventos();
         this.actualizarHistorial();
+        this.cargarTratamientos();
     }
 
     // Configuración de eventos 
     configurarEventos() {
-        // Botones principales
+        // Botones navbar
         document.getElementById('btnPedirTurno')?.addEventListener('click', () => this.abrirFormulario());
         document.getElementById('btnVerHistorial')?.addEventListener('click', () => this.mostrarHistorial());
         document.getElementById('btnConfirmarTurno')?.addEventListener('click', () => this.procesarTurno());
@@ -51,7 +52,7 @@ class GestorTurnos {
             }
         });
 
-        // Actualizar el resumen
+        document.getElementById('tratamiento')?.addEventListener('change', () => this.mostrarResumen());
         document.getElementById('dia')?.addEventListener('change', () => this.mostrarResumen());
         document.getElementById('consultorio')?.addEventListener('change', () => this.mostrarResumen());
     }
@@ -61,6 +62,7 @@ class GestorTurnos {
         document.getElementById('formularioTurno').reset();
         this.limpiarTodosLosErrores();
         this.ocultarResumen();
+        this.prefillDatosPersonales();
         new bootstrap.Modal(document.getElementById('turnoModal')).show();
     }
 
@@ -70,6 +72,7 @@ class GestorTurnos {
 
         if (this.validarFormulario(datos)) {
             this.guardarTurno(datos);
+            this.guardarDatosPersonales(datos);
             this.mostrarConfirmacion();
             bootstrap.Modal.getInstance(document.getElementById('turnoModal')).hide();
             this.actualizarHistorial();
@@ -89,6 +92,30 @@ class GestorTurnos {
         datos.id = Date.now();
 
         return datos;
+    }
+
+    // Prefill de datos personales
+    prefillDatosPersonales() {
+        try {
+            const raw = localStorage.getItem('datosPersonalesVitalis');
+            if (!raw) return;
+            const datos = JSON.parse(raw);
+            ['nombre', 'dni', 'telefono', 'email'].forEach(campo => {
+                const el = document.getElementById(campo);
+                if (el && datos[campo]) el.value = datos[campo];
+            });
+        } catch (_) { }
+    }
+
+    // Guardar solo los datos personales para futuras sesiones
+    guardarDatosPersonales(datos) {
+        const persistir = {
+            nombre: datos.nombre,
+            dni: datos.dni,
+            telefono: datos.telefono,
+            email: datos.email
+        };
+        localStorage.setItem('datosPersonalesVitalis', JSON.stringify(persistir));
     }
 
     // Validación 
@@ -175,19 +202,54 @@ class GestorTurnos {
         if (resumenDiv) resumenDiv.style.display = 'none';
     }
 
-    // Guardar el turno
+    // Cargar tratamientos desde json
+    async cargarTratamientos() {
+        try {
+            const resp = await fetch('./json/tratamientos.json');
+            if (!resp.ok) throw new Error('No se pudieron cargar los tratamientos');
+            this.tratamientos = await resp.json();
+            this.renderizarTratamientos();
+            this.poblarSelectTratamientos();
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    //  tarjetas de tratamientos 
+    renderizarTratamientos() {
+        const contenedorSeccion = document.querySelector('.home-tratamientos article');
+        if (!contenedorSeccion || !Array.isArray(this.tratamientos)) return;
+
+        const html = this.tratamientos.map(t => `
+            <div class="${t.clase}">
+                <h3>${t.nombre}</h3>
+            </div>
+        `).join('');
+        contenedorSeccion.innerHTML = html;
+    }
+
+    
+    poblarSelectTratamientos() {
+        const select = document.getElementById('tratamiento');
+        if (!select || !Array.isArray(this.tratamientos)) return;
+        const opciones = ['<option value="">Selecciona un tratamiento</option>']
+            .concat(this.tratamientos.map(t => `<option value="${t.nombre}">${t.nombre}</option>`));
+        select.innerHTML = opciones.join('');
+    }
+//turnos
+   
     guardarTurno(datos) {
         this.turnos.push(datos);
         localStorage.setItem('turnosVitalis', JSON.stringify(this.turnos));
     }
 
-    // Cargar los turnos
+   
     cargarTurnos() {
         const turnosGuardados = localStorage.getItem('turnosVitalis');
         return turnosGuardados ? JSON.parse(turnosGuardados) : [];
     }
-
-    // Mostrar la confirmación
+// Confirmación
+    
     mostrarConfirmacion() {
         const notificacion = document.createElement('div');
         notificacion.className = 'alert alert-success position-fixed';
@@ -202,13 +264,14 @@ class GestorTurnos {
         setTimeout(() => notificacion.remove(), 5000);
     }
 
-    // Mostrar el historial
+    //historial de turnos
+
     mostrarHistorial() {
         this.actualizarHistorial();
         new bootstrap.Modal(document.getElementById('historialModal')).show();
     }
 
-    // Actualizar el historial
+    
     actualizarHistorial() {
         const historialContenido = document.getElementById('historialContenido');
         if (!historialContenido) return;
@@ -235,25 +298,80 @@ class GestorTurnos {
                             <strong>Fecha de solicitud:</strong> ${turno.fechaCreacion}
                         </p>
                         ${turno.observaciones ? `<small class="text-muted"><strong>Observaciones:</strong> ${turno.observaciones}</small>` : ''}
+                        <div class="mt-3 d-flex gap-2">
+                            <button class="btn btn-sm btn-danger" data-action="eliminar-turno" data-id="${turno.id}">Eliminar</button>
+                        </div>
                     </div>
                 </div>
             </div>
         `).join('');
 
         historialContenido.innerHTML = `<div class="row">${html}</div>`;
+
+        
+        historialContenido.querySelectorAll('button[data-action="eliminar-turno"]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = e.currentTarget.getAttribute('data-id');
+                this.eliminarTurnoPorId(id);
+            });
+        });
     }
 
-    // Borrar el historial
+    // limpiar el historial
     limpiarHistorial() {
-        if (confirm('¿Estás seguro de que quieres eliminar todos los turnos registrados?')) {
-            this.turnos = [];
-            localStorage.removeItem('turnosVitalis');
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: '¿Eliminar todo el historial?',
+                text: 'Esta acción no se puede deshacer.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.turnos = [];
+                    localStorage.removeItem('turnosVitalis');
+                    this.actualizarHistorial();
+                    Swal.fire('Eliminado', 'El historial fue eliminado.', 'success');
+                }
+            });
+        } else {
+            if (confirm('¿Estás seguro de que quieres eliminar todos los turnos registrados?')) {
+                this.turnos = [];
+                localStorage.removeItem('turnosVitalis');
+                this.actualizarHistorial();
+            }
+        }
+    }
+
+    // Eliminar un turno
+    eliminarTurnoPorId(id) {
+        const ejecutarEliminacion = () => {
+            this.turnos = this.turnos.filter(t => String(t.id) !== String(id));
+            localStorage.setItem('turnosVitalis', JSON.stringify(this.turnos));
             this.actualizarHistorial();
+        };
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: '¿Eliminar este turno?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    ejecutarEliminacion();
+                    Swal.fire('Eliminado', 'El turno fue eliminado.', 'success');
+                }
+            });
+        } else {
+            if (confirm('¿Eliminar este turno?')) ejecutarEliminacion();
         }
     }
 }
 
-// Iniciar el simulador cuando Bootstrap esté listo
+//  Bootstrap 
 function inicializarSimulador() {
     if (typeof bootstrap !== 'undefined') {
         window.gestorTurnos = new GestorTurnos();
@@ -262,5 +380,5 @@ function inicializarSimulador() {
     }
 }
 
-// Inicializar cuando el DOM esté listo
+// DOM
 document.addEventListener('DOMContentLoaded', inicializarSimulador);
